@@ -1,0 +1,24 @@
+# Problem Configuration
+Name = {{.Name}}
+ProblemType = Benchmark
+TrainData = benchmark/{{.Name}}.trn 
+TestData = benchmark/{{.Name}}.tst
+HitRatio = 0.01
+MaxIter = 1000
+
+# Search Configuration
+UsableVars = {{range $I, $E := .TrainVars }} {{$I}}{{end}} # list of indices into independent variables
+SearchVar = 0 # index into dependent variables
+
+# Tree Bounds
+MaxSize = 50
+MinSize = 4   # GPSR does not work when MinSize < 4
+MaxDepth = 6
+MinDepth = 1
+
+# Tree Components
+UsableVars = {{range $I, $E := .TrainVars }} {{$I}}{{end}}
+Roots = Add
+Nodes = {{range .Functions}} {{.}}{{end}}
+NonTrig = {{range .NonTrig}} {{.}}{{end}}
+Leafs = Var ConstantF

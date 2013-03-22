@@ -1,0 +1,28 @@
+Target := eqns
+
+Tex := $(Target).tex
+Pdf := $(Target).pdf
+
+all: clean $(Pdf)
+
+# Empty entry in *INPUTS means to search default system directories.
+$(Pdf): $(Tex) 
+	@./scripts/center.pl "Making $@" 80 "*"
+	@set -e; \
+	TEXINPUTS=".::"; \
+	BSTINPUTS=".:bib::"; \
+	BIBINPUTS=".:bib::"; \
+	export TEXINPUTS BSTINPUTS BIBINPUTS; \
+	./scripts/center.pl "pdflatex $(Target)" 80 -; \
+	pdflatex $(Target); \
+	./scripts/center.pl "bibtex $(Target)" 80 -; \
+	bibtex $(Target); \
+	./scripts/center.pl "pdflatex $(Target)" 80 -; \
+	pdflatex $(Target); \
+	./scripts/center.pl "pdflatex $(Target)" 80 -; \
+	pdflatex $(Target);
+
+.PHONY: clean all
+clean:
+	rm -f *.log *.aux *.bbl *.blg *.dvi *.out $(Target).pdf $(Target).spl
+
