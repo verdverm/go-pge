@@ -10,9 +10,9 @@ import (
 	"strings"
 	"time"
 
-	config "github.com/verdverm/go-pge/config"
-	pge "github.com/verdverm/go-pge/pge"
-	probs "github.com/verdverm/go-pge/problems"
+	config "go-pge/config"
+	pge "go-pge/pge"
+	probs "go-pge/problems"
 )
 
 // defines the interface to a search type [GP,PE]
@@ -33,7 +33,7 @@ type Search interface {
 	Clean()
 }
 
-// parameters to a main search, which sets up the global system 
+// parameters to a main search, which sets up the global system
 // and instructs in where to find the sub-searches
 type mainConfig struct {
 	dataDir string
