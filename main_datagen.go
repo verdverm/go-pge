@@ -4,8 +4,8 @@ import (
 	"fmt"
 	"strings"
 
+	probs "github.com/verdverm/go-pge/problems"
 	expr "github.com/verdverm/go-symexpr"
-	probs "go-pge/problems"
 )
 
 func genBenchmark(probname string) {

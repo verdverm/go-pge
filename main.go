@@ -72,7 +72,7 @@ func main() {
 	}
 
 	/*******************************
-				Main Code			
+				Main Code
 	 *******************************/
 
 	var DS MainSearch
