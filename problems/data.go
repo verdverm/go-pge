@@ -2,6 +2,7 @@ package problems
 
 import (
 	"bufio"
+	"bytes"
 	"fmt"
 	"math"
 	"math/rand"
@@ -187,6 +188,74 @@ func (d *PointSet) ReadPointSet(filename string) {
 		}
 	}
 	fmt.Printf("Num Points: %v\n", len(d.dataPoints))
+}
+
+func ReadBytesPointSet(ftotal []byte) (d *PointSet) {
+	d = new(PointSet)
+	// ftotal, err := os.OpenFile(filename, os.O_RDONLY, 0)
+	// if err != nil {
+	// 	fmt.Printf("err: %v\n", err)
+	// 	return
+	// }
+	// defer ftotal.Close()
+	var err error
+	file := bytes.NewReader(ftotal)
+
+	var word string
+
+	// get independent variables (x_i...)
+	for i := 0; ; i++ {
+		_, err := fmt.Fscanf(file, "%s", &word)
+		if err != nil {
+			break
+		}
+		d.indepNames = append(d.indepNames, word)
+	}
+	d.numDim = len(d.indepNames)
+
+	// get dependent variables (y_j...)
+	for i := 0; ; i++ {
+		_, err := fmt.Fscanf(file, "%s", &word)
+		if err != nil {
+			break
+		}
+		d.depndNames = append(d.depndNames, word)
+	}
+
+	fmt.Printf("Var Names = %v | %v\n", d.depndNames, d.indepNames)
+
+	for i := 0; ; i++ {
+		var pnt Point
+		var dval, ival float64
+		if err != nil {
+			break
+		}
+
+		for j := 0; j < len(d.indepNames); j++ {
+			_, err = fmt.Fscanf(file, "%f", &ival)
+			if err != nil {
+				break
+			}
+			pnt.indep = append(pnt.indep, ival)
+		}
+
+		for j := 0; j < len(d.depndNames); j++ {
+			_, err = fmt.Fscanf(file, "%f\n", &dval)
+			if err != nil {
+				break
+			}
+			pnt.depnd = append(pnt.depnd, dval)
+		}
+
+		if len(pnt.indep) > 0 {
+			d.dataPoints = append(d.dataPoints, pnt)
+		}
+		if i%100 == 0 {
+			fmt.Println("Point(%d): %v\n", i, pnt)
+		}
+	}
+	fmt.Printf("Num Points: %v\n", len(d.dataPoints))
+	return d
 }
 
 func (d *PointSet) WritePointSet(filename string) {
