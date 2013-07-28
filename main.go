@@ -32,6 +32,7 @@ var arg_pge_iter = flag.Int("iter", -1, "iterations for PGE")
 var arg_pge_peel = flag.Int("peel", -1, "peel count for PGE")
 var arg_pge_init = flag.String("init", "", "initialize function for PGE")
 var arg_pge_grow = flag.String("grow", "", "expansion function for PGE")
+var arg_pge_evals = flag.Int("evals", 1, "number of evaluater routines")
 
 var cfg_help_str = "A main config file"
 var pcfg_help_str = "A Problem config file"

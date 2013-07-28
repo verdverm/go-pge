@@ -379,7 +379,6 @@ func (PS *PgeSearch) step() {
 			eval_cnt++
 		}
 	}
-	fmt.Println("GOT HERE 1")
 	for i := 0; i < eval_cnt; i++ {
 		re := <-PS.eval_out
 		// end channeled eval
@@ -419,7 +418,6 @@ func (PS *PgeSearch) step() {
 
 		}
 	}
-	fmt.Println("GOT HERE 2")
 	// } // for sequential eval
 	PS.Queue.Sort()
 

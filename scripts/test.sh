@@ -79,11 +79,13 @@ do
 	echo "PGE $I $P $M :: $F  "
 	echo "------------"
 	date
+	echo "./go-pge -pcfg=prob/bench/${F}.cfg -peel=${P} -iter=${I} -init=${M} -grow=${M} > 'runs/${F}/${F}_pge_${I}_${P}_${M}.out'"
 	time ./go-pge -pcfg=prob/bench/${F}.cfg -peel=${P} -iter=${I} -init=${M} -grow=${M} > "runs/${F}/${F}_pge_${I}_${P}_${M}.out"
-	
-	cp runs/${F}/pge/pesr/pesr:fitness.log runs/${F}/${F}_pge_${I}_${P}_${M}.fit
+	# gdb ./go-pge
+
+	cp runs/${F}/pge/pge/pge:fitness.log runs/${F}/${F}_pge_${I}_${P}_${M}.fit
 	echo "${F}_pge_${I}_${P}_${M}" >> runs/${F}_pge_fit.txt 
-	tail -n 7 runs/${F}/pge/pesr/pesr:fitness.log >> runs/${F}_pge_fit.txt
+	tail -n 7 runs/${F}/pge/pge/pge:fitness.log >> runs/${F}_pge_fit.txt
 	for i in {1..4}; do
 		echo "" >> runs/${F}_pge_fit.txt 
 	done
