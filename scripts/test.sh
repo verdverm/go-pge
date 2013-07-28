@@ -4,18 +4,18 @@ files=(
 	# Koza_1
 	# Koza_2
 	# Koza_3
-	# Nguyen_01
-	Nguyen_02
+	Nguyen_01
+	# Nguyen_02
 	# Nguyen_03
 	# Nguyen_04
-	Nguyen_05
+	# Nguyen_05
 	# Nguyen_06
 	# Nguyen_07
 	# Nguyen_08
 	# Nguyen_09
-	Nguyen_10
+	# Nguyen_10
 	# Nguyen_11
-	Nguyen_12
+	# Nguyen_12
 
 
 	# Korns_01

@@ -96,7 +96,7 @@ type PgeSearch struct {
 
 	// comm down
 
-	// best exprs 
+	// best exprs
 	Best *probs.ReportQueue
 
 	// training data in C format
@@ -288,7 +288,7 @@ func (PS *PgeSearch) loop() {
 	PS.checkMessages()
 	for !PS.stop {
 
-		// fmt.Println("in: PS.step() ", PS.iter)
+		fmt.Println("in: PS.step() ", PS.iter)
 		PS.step()
 
 		// if PS.iter%PS.cnfg.pgeRptEpoch == 0 {
@@ -342,6 +342,7 @@ func (PS *PgeSearch) loop() {
 func (PS *PgeSearch) step() {
 
 	loop := 0
+	eval_cnt := 0 // for channeled eval
 
 	es := PS.peel()
 
@@ -353,6 +354,7 @@ func (PS *PgeSearch) step() {
 		if E == nil {
 			continue
 		}
+
 		for _, e := range E {
 			if e == nil {
 				continue
@@ -369,44 +371,56 @@ func (PS *PgeSearch) step() {
 				continue
 			}
 
-			re := RegressExpr(e, PS.prob)
+			// for serial eval
+			// re := RegressExpr(e, PS.prob)
 
-			// check for NaN/Inf in re.error  and  if so, skip
-			if math.IsNaN(re.TestError()) || math.IsInf(re.TestError(), 0) {
-				fmt.Printf("Bad Error\n%v\n", re)
-				continue
-			}
-
-			if re.TestError() < PS.minError {
-				PS.minError = re.TestError()
-			}
-
-			// check for coeff == 0
-			doIns := true
-			for _, c := range re.Coeff() {
-				// i > 0 for free coeff
-				if math.Abs(c) < PS.cnfg.zeroEpsilon {
-					doIns = false
-					break
-				}
-			}
-
-			if doIns {
-				re.SetProcID(PS.id)
-				re.SetIterID(PS.iter)
-				re.SetUnitID(loop)
-				re.SetUniqID(PS.neqns)
-				loop++
-				PS.neqns++
-				// fmt.Printf("Queue.Push(): %v\n%v\n\n", re.Expr(), serial)
-				// fmt.Printf("Queue.Push(): %v\n", re)
-				// fmt.Printf("Queue.Push(): %v\n", re.Expr())
-
-				PS.Queue.Push(re)
-
-			}
+			// start channeled eval
+			PS.eval_in <- e
+			eval_cnt++
 		}
 	}
+	fmt.Println("GOT HERE 1")
+	for i := 0; i < eval_cnt; i++ {
+		re := <-PS.eval_out
+		// end channeled eval
+
+		// check for NaN/Inf in re.error  and  if so, skip
+		if math.IsNaN(re.TestError()) || math.IsInf(re.TestError(), 0) {
+			fmt.Printf("Bad Error\n%v\n", re)
+			continue
+		}
+
+		if re.TestError() < PS.minError {
+			PS.minError = re.TestError()
+		}
+
+		// check for coeff == 0
+		doIns := true
+		for _, c := range re.Coeff() {
+			// i > 0 for free coeff
+			if math.Abs(c) < PS.cnfg.zeroEpsilon {
+				doIns = false
+				break
+			}
+		}
+
+		if doIns {
+			re.SetProcID(PS.id)
+			re.SetIterID(PS.iter)
+			re.SetUnitID(loop)
+			re.SetUniqID(PS.neqns)
+			loop++
+			PS.neqns++
+			// fmt.Printf("Queue.Push(): %v\n%v\n\n", re.Expr(), serial)
+			// fmt.Printf("Queue.Push(): %v\n", re)
+			// fmt.Printf("Queue.Push(): %v\n", re.Expr())
+
+			PS.Queue.Push(re)
+
+		}
+	}
+	fmt.Println("GOT HERE 2")
+	// } // for sequential eval
 	PS.Queue.Sort()
 
 }
