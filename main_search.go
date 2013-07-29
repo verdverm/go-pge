@@ -197,6 +197,7 @@ func (DS *MainSearch) Init(done chan int, input interface{}) {
 			if *arg_pge_grow != "" {
 				PS.SetGrowMethod(*arg_pge_grow)
 			}
+			PS.SetEvalrCount(*arg_pge_evals)
 
 		} else {
 			log.Fatalf("unknown config type: %v  from  %v\n", cfg[:4], cfg)

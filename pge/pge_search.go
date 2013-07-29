@@ -33,6 +33,8 @@ type pgeConfig struct {
 
 	initMethod string
 	growMethod string
+
+	evalrCount int
 }
 
 func pgeConfigParser(field, value string, config interface{}) (err error) {
@@ -51,6 +53,9 @@ func pgeConfigParser(field, value string, config interface{}) (err error) {
 
 	case "PEELCOUNT":
 		PC.peelCnt, err = strconv.Atoi(value)
+
+	case "EVALRCOUNT":
+		PC.evalrCount, err = strconv.Atoi(value)
 
 	case "SORTTYPE":
 		switch strings.ToLower(value) {
@@ -157,6 +162,9 @@ func (PS *PgeSearch) SetInitMethod(init string) {
 func (PS *PgeSearch) SetGrowMethod(grow string) {
 	PS.cnfg.growMethod = grow
 }
+func (PS *PgeSearch) SetEvalrCount(cnt int) {
+	PS.cnfg.evalrCount = cnt
+}
 
 func (PS *PgeSearch) ParseConfig(filename string) {
 	fmt.Printf("Parsing PGE Config: %s\n", filename)
@@ -255,7 +263,7 @@ func (PS *PgeSearch) Init(done chan int, prob *probs.ExprProblem, logdir string,
 	PS.eval_in = make(chan expr.Expr, 4048)
 	PS.eval_out = make(chan *probs.ExprReport, 4048)
 
-	for i := 0; i < 2; i++ {
+	for i := 0; i < PS.cnfg.evalrCount; i++ {
 		go PS.Evaluate()
 	}
 }

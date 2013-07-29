@@ -55,6 +55,13 @@ iters=(
 	# 1000
 )
 
+evals=(
+	1
+	2
+	4
+	8
+)
+
 
 
 mkdir -p runs 
@@ -75,23 +82,24 @@ do
 	for M in ${methods[@]}; do
 	for I in ${iters[@]}; do
 	for P in ${peels[@]}; do
+	for E in ${evals[@]}; do
 
 	echo "PGE $I $P $M :: $F  "
 	echo "------------"
 	date
-	echo "./go-pge -pcfg=prob/bench/${F}.cfg -peel=${P} -iter=${I} -init=${M} -grow=${M} > 'runs/${F}/${F}_pge_${I}_${P}_${M}.out'"
-	time ./go-pge -pcfg=prob/bench/${F}.cfg -peel=${P} -iter=${I} -init=${M} -grow=${M} > "runs/${F}/${F}_pge_${I}_${P}_${M}.out"
+	echo "./go-pge -pcfg=prob/bench/${F}.cfg -evals=${E} -peel=${P} -iter=${I} -init=${M} -grow=${M} > 'runs/${F}/${F}_pge_${E}_${I}_${P}_${M}.out'"
+	time ./go-pge -pcfg=prob/bench/${F}.cfg -evals=${E} -peel=${P} -iter=${I} -init=${M} -grow=${M} > "runs/${F}/${F}_pge_${E}_${I}_${P}_${M}.out"
 	# gdb ./go-pge
 
-	cp runs/${F}/pge/pge/pge:fitness.log runs/${F}/${F}_pge_${I}_${P}_${M}.fit
-	echo "${F}_pge_${I}_${P}_${M}" >> runs/${F}_pge_fit.txt 
+	cp runs/${F}/pge/pge/pge:fitness.log runs/${F}/${F}_pge_${E}_${I}_${P}_${M}.fit
+	echo "${F}_pge_${E}_${I}_${P}_${M}" >> runs/${F}_pge_fit.txt 
 	tail -n 7 runs/${F}/pge/pge/pge:fitness.log >> runs/${F}_pge_fit.txt
 	for i in {1..4}; do
 		echo "" >> runs/${F}_pge_fit.txt 
 	done
 	# 
-	echo "${F}_pge_${I}_${P}_${M}.out" >> runs/${F}_pge_tails.txt 
-	tail -n 333 runs/${F}/${F}_pge_${I}_${P}_${M}.out >> runs/${F}_pge_tails.txt 
+	echo "${F}_pge_${E}_${I}_${P}_${M}.out" >> runs/${F}_pge_tails.txt 
+	tail -n 333 runs/${F}/${F}_pge_${E}_${I}_${P}_${M}.out >> runs/${F}_pge_tails.txt 
 	for i in {1..200}; do
 		echo "" >> runs/${F}_pge_tails.txt 
 	done
@@ -101,6 +109,7 @@ do
 	echo
 
 	done
+	done
 		for i in {1..5}; do
 			echo "" >> runs/${F}_pge_fit.txt 
 		done
@@ -109,6 +118,7 @@ do
 			echo "" >> runs/${F}_pge_fit.txt 
 		done
 	done
+
 
 
 
