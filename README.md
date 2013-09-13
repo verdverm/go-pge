@@ -31,3 +31,20 @@ basically white space seperated with the variable names at the top of the file
 (sample benchmark files are around)
 
 There may be code paths hanging around to allow you to use multiple input sets
+
+
+Installation
+=====================================
+
+- install Go  (golang.org)
+- add $GOPATH to $PATH
+- sudo apt-get install liblapack3 liblapack-dev libblas3 libblas-dev f2c
+
+- go get github.com/verdverm/go-pge
+- navigate to github.com/verdverm/go-levmar/levmar-2.6
+-- cmake -DCMAKE_BUILD_TYPE=RelWithDebInfo -DLINSOLVERS_RETAIN_MEMORY=0 .
+-- make
+- navigate to github.com/verdverm/go-pge
+- go build
+
+now you should be able to run scripts/test.sh
