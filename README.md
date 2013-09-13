@@ -37,8 +37,8 @@ Installation
 =====================================
 
 1. install Go  (golang.org)
-2. add $GOPATH to $PATH
-3. sudo apt-get install liblapack3 liblapack-dev libblas3 libblas-dev f2c
+2. add $GOROOT to $PATH
+3. sudo apt-get install liblapack3 liblapack-dev libblas3 libblas-dev f2c (ubuntu)
 
 4. go get github.com/verdverm/go-pge
 5. navigate to github.com/verdverm/go-levmar/levmar-2.6
