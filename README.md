@@ -36,15 +36,15 @@ There may be code paths hanging around to allow you to use multiple input sets
 Installation
 =====================================
 
-- install Go  (golang.org)
-- add $GOPATH to $PATH
-- sudo apt-get install liblapack3 liblapack-dev libblas3 libblas-dev f2c
+1. install Go  (golang.org)
+2. add $GOPATH to $PATH
+3. sudo apt-get install liblapack3 liblapack-dev libblas3 libblas-dev f2c
 
-- go get github.com/verdverm/go-pge
-- navigate to github.com/verdverm/go-levmar/levmar-2.6
--- cmake -DCMAKE_BUILD_TYPE=RelWithDebInfo -DLINSOLVERS_RETAIN_MEMORY=0 .
--- make
-- navigate to github.com/verdverm/go-pge
-- go build
+4. go get github.com/verdverm/go-pge
+5. navigate to github.com/verdverm/go-levmar/levmar-2.6
+  * cmake -DCMAKE_BUILD_TYPE=RelWithDebInfo -DLINSOLVERS_RETAIN_MEMORY=0 .
+  * make
+6. navigate to github.com/verdverm/go-pge
+7. go build
 
 now you should be able to run scripts/test.sh
