@@ -393,7 +393,7 @@ func (PS *PgeSearch) step() {
 
 		// check for NaN/Inf in re.error  and  if so, skip
 		if math.IsNaN(re.TestError()) || math.IsInf(re.TestError(), 0) {
-			fmt.Printf("Bad Error\n%v\n", re)
+			// fmt.Printf("Bad Error\n%v\n", re)
 			continue
 		}
 
@@ -641,20 +641,26 @@ func RegressExpr(E expr.Expr, P *probs.ExprProblem) (R *probs.ExprReport) {
 	R = new(probs.ExprReport)
 	R.SetExpr(eqn) /*.ConvertToConstantFs(coeff)*/
 	R.SetCoeff(coeff)
-	_, s2, serr := scoreExpr(E, P, coeff)
-	R.SetTestScore(s2)
-	R.SetTestError(serr)
 	R.Expr().CalcExprStats()
+
+	// hitsL1, hitsL2, evalCnt, nanCnt, infCnt, l1_err, l2_err := scoreExpr(E, P, coeff)
+	_, _, _, trnNanCnt, _, trn_l1_err, _ := scoreExpr(E, P, P.Train, coeff)
+	_, _, tstEvalCnt, tstNanCnt, _, tst_l1_err, tst_l2_err := scoreExpr(E, P, P.Test, coeff)
+
+	R.SetTrainScore(trnNanCnt)
+	R.SetTrainError(trn_l1_err)
+
+	R.SetPredScore(tstNanCnt)
+	R.SetTestScore(tstEvalCnt)
+	R.SetTestError(tst_l1_err)
+	R.SetPredError(tst_l2_err)
 
 	return R
 }
 
-func scoreExpr(e expr.Expr, P *probs.ExprProblem, coeff []float64) (int, int, float64) {
-	score := 0
-	score2 := 0
-	error := 0.0
-
-	for _, PS := range P.Test {
+func scoreExpr(e expr.Expr, P *probs.ExprProblem, dataSets []*probs.PointSet, coeff []float64) (hitsL1, hitsL2, evalCnt, nanCnt, infCnt int, l1_err, l2_err float64) {
+	var l1_sum, l2_sum float64
+	for _, PS := range dataSets {
 		for _, p := range PS.Points() {
 			y := p.Depnd(P.SearchVar)
 			var out float64
@@ -664,26 +670,39 @@ func scoreExpr(e expr.Expr, P *probs.ExprProblem, coeff []float64) (int, int, fl
 				out = e.Eval(p.Indep(0), p.Indeps()[1:], coeff, PS.SysVals())
 			}
 
-			diff := math.Abs(out - y)
-			if math.IsNaN(diff) {
+			if math.IsNaN(out) {
+				nanCnt++
 				continue
+			} else if math.IsInf(out, 0) {
+				infCnt++
+				continue
+			} else {
+				evalCnt++
 			}
-			if diff < P.HitRatio {
-				score++
+
+			diff := out - y
+			l1_val := math.Abs(diff)
+			l2_val := diff * diff
+			l1_sum += l1_val
+			l2_sum += l2_val
+
+			if l1_val < P.HitRatio {
+				hitsL1++
 			}
-			err := math.Abs(diff / y)
-			if math.IsNaN(err) || math.IsInf(err, 0) {
-				err = diff
-			}
-			error += err
-			if err < P.HitRatio {
-				score2++
+			if l2_val < P.HitRatio {
+				hitsL2++
 			}
 		}
 	}
 
-	eAve := error / (float64(len(P.Test)) * float64(P.Test[0].NumPoints()))
-	// eAve := error / float64(P.Test.NumPoints())
+	if evalCnt == 0 {
+		l1_err = math.NaN()
+		l2_err = math.NaN()
+	} else {
+		fEvalCnt := float64(evalCnt + 1)
+		l1_err = l1_sum / fEvalCnt
+		l2_err = math.Sqrt(l2_sum / fEvalCnt)
+	}
 
-	return score, score2, eAve
+	return
 }

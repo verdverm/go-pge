@@ -147,25 +147,36 @@ func (r *ExprReport) Clone() *ExprReport {
 }
 
 var reportFormatString = `%v
-size:   %d  depth:  %d   coeff: %v
-uId: %d   pId: %d
-iId: %d   tId: %d
-pred:   %d  %f
-train:  %d  %f
-test:   %d  %f
+coeff: %v
+size: %4d   depth: %4d   
+uId:  %4d   pId:   %4d
+iId:  %4d   tId:   %4d
+
+train NaNs: %4d
+train L1:   %f
+
+test  NaNs: %4d
+test Evals: %4d   
+test  L1:   %f
+test  L2:   %f
 `
 
 func (r *ExprReport) String() string {
 
-	return fmt.Sprintf(reportFormatString, r.expr, r.expr.Size(), r.expr.Height(), r.Coeff(),
+	return fmt.Sprintf(reportFormatString,
+		r.expr, r.Coeff(),
+		r.expr.Size(), r.expr.Height(),
 		r.uniqID, r.procID, r.iterID, r.unitID,
-		r.predScore, r.predError, r.trainScore, r.trainError, r.testScore, r.testError)
+		r.trainScore, r.trainError,
+		r.predScore, r.testScore, r.testError, r.predError)
 }
 func (r *ExprReport) Latex(dnames, snames []string, cvals []float64) string {
 
-	return fmt.Sprintf(reportFormatString, r.expr.PrettyPrint(dnames, snames, cvals), r.expr.Size(), r.expr.Height(), r.Coeff(),
+	return fmt.Sprintf(reportFormatString,
+		r.expr.PrettyPrint(dnames, snames, cvals), r.Coeff(),
+		r.expr.Size(), r.expr.Height(),
 		r.uniqID, r.procID, r.iterID, r.unitID,
-		r.predScore, r.predError, r.trainScore, r.trainError, r.testScore, r.testError)
+		r.trainScore, r.testScore, r.trainError, r.testError, r.predError)
 }
 
 func (r *ExprReport) Expr() expr.Expr     { return r.expr }
