@@ -6,8 +6,6 @@ If you publish any work using this software, please cite:
 Tony Worm and Kenneth Chiu. Prioritized Grammar Enumeration: Symbolic Regression by Dynamic Programming.
 In Proceedings of the Genetic and Evolutionary Computation Conference (GECCO’2013). July 6-10 Amsterdam, Netherlands.
 
-Also, check out www.symbolicregression.org   [I'm new to web-dev'n ;]
-
 Sorry there is a bunch of garbage hanging around in the code base.  
 (and a dependency go-levmar [which can be a pain to get setup])
 
@@ -38,7 +36,7 @@ Installation
 
 1. install Go  (golang.org)
 2. add $GOROOT to $PATH
-3. sudo apt-get install liblapack3 liblapack-dev libblas3 libblas-dev f2c (ubuntu)
+3. sudo apt-get install g++ cmake liblapack3 liblapack-dev libblas3 libblas-dev f2c (ubuntu)
 
 4. go get github.com/verdverm/go-pge
 5. navigate to github.com/verdverm/go-levmar/levmar-2.6
